@@ -1,0 +1,122 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
+
+    html {
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+    }
+
+    body {
+        margin: 0;
+        font-family: "Inter", "Segoe UI", sans-serif;
+        color: #0f172a;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+    }
+
+    img,
+    picture,
+    video,
+    canvas,
+    svg {
+        display: block;
+        max-width: 100%;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+        font: inherit;
+    }
+}
+
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.campus-map {
+    background-image:
+        linear-gradient(180deg, rgba(15, 23, 42, 0.08), rgba(15, 23, 42, 0.4)),
+        url("/images/map.PNG");
+    background-size: cover;
+    background-position: center;
+}
+
+.slot-frame {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 8.75rem;
+    border-radius: 1.25rem;
+    transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.slot-frame:hover {
+    transform: translateY(-2px);
+}
+
+.slot-available {
+    background: linear-gradient(180deg, rgba(34, 197, 94, 0.92), rgba(22, 163, 74, 0.84));
+    box-shadow: inset 0 0 0 1px rgba(187, 247, 208, 0.45), 0 16px 34px rgba(34, 197, 94, 0.18);
+}
+
+.slot-occupied {
+    background: linear-gradient(180deg, rgba(247, 54, 54, 0.95), rgba(255, 73, 73, 0.92));
+    box-shadow: inset 0 0 0 1px rgba(240, 226, 226, 0.3), 0 16px 34px rgba(100, 116, 139, 0.16);
+}
+
+.slot-frame span {
+    position: absolute;
+    width: 2rem;
+    height: 2rem;
+    border: 4px solid rgba(255, 255, 255, 0.45);
+    border-radius: 0.55rem;
+}
+
+.slot-frame span:nth-child(1) {
+    top: 0.75rem;
+    left: 0.75rem;
+    border-right: none;
+    border-bottom: none;
+}
+
+.slot-frame span:nth-child(2) {
+    top: 0.75rem;
+    right: 0.75rem;
+    border-left: none;
+    border-bottom: none;
+}
+
+.slot-frame span:nth-child(3) {
+    bottom: 0.75rem;
+    left: 0.75rem;
+    border-right: none;
+    border-top: none;
+}
+
+.slot-frame span:nth-child(4) {
+    bottom: 0.75rem;
+    right: 0.75rem;
+    border-left: none;
+    border-top: none;
+}
+
+@media (min-width: 1024px) {
+    .slot-frame {
+        min-height: 11rem;
+    }
+}
