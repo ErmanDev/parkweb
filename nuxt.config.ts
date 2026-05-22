@@ -8,12 +8,22 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       /**
-       * Optional: direct cross-origin API URL (needs CORS on Render).
-       * Prefer leaving this empty on Vercel — vercel.json proxies /api/* to Render.
+       * Override API host (e.g. https://parkweb.onrender.com).
+       * Leave empty: localhost uses /api; Vercel uses Render URL; Render site uses /api.
        */
-      apiBase: process.env.NUXT_PUBLIC_API_BASE || "",
+      apiBase:
+        process.env.NUXT_PUBLIC_API_BASE ||
+        (process.env.VERCEL ? "https://parkweb.onrender.com" : ""),
     },
   },
+
+  routeRules: process.env.VERCEL
+    ? {
+        "/api/**": {
+          proxy: "https://parkweb.onrender.com/api/**",
+        },
+      }
+    : {},
 
   nitro: {
     preset: process.env.VERCEL ? "vercel" : "node-server",

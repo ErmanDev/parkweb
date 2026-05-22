@@ -7,6 +7,7 @@ import {
     statusBadgeClass,
     motionLabel,
 } from "~/composables/parkingDisplay";
+import { resolveSlotsApiUrl } from "~/utils/resolveSlotsApiUrl";
 
 const slots = ref([...FALLBACK_SLOTS]);
 const connectionState = ref("connecting");
@@ -16,28 +17,31 @@ let slotsApiUrl = "/api/slots";
 
 async function pollOnce() {
     try {
-        const data = await $fetch(slotsApiUrl);
+        const data = await $fetch(slotsApiUrl, {
+            timeout: 25_000,
+            retry: 0,
+        });
         const mapped = mapSnapshotSlots(data);
-        if (mapped) slots.value = mapped;
+        if (!mapped) {
+            connectionState.value = "offline";
+            console.warn("[parking] invalid /api/slots payload from", slotsApiUrl);
+            return;
+        }
+        slots.value = mapped;
         connectionState.value = "live";
     } catch (err) {
         connectionState.value = "offline";
-        if (import.meta.dev) {
-            console.warn("[parking] slots poll failed:", slotsApiUrl, err);
-        }
+        console.warn("[parking] slots poll failed:", slotsApiUrl, err);
     }
 }
 
 function startPolling() {
     if (import.meta.server || pollStarted) return;
     pollStarted = true;
-    const config = useRuntimeConfig();
-    const base = (config.public.apiBase || "").replace(/\/$/, "");
-    // Default: same-origin /api/slots (Vercel rewrites this to Render).
-    slotsApiUrl = base ? `${base}/api/slots` : "/api/slots";
+    slotsApiUrl = resolveSlotsApiUrl();
     teardown();
     pollOnce();
-    pollTimer = window.setInterval(pollOnce, 1000);
+    pollTimer = window.setInterval(pollOnce, 500);
 }
 
 function teardown() {
@@ -86,6 +90,9 @@ export function useParkingSlots() {
 export function useParkingSlotsPolling() {
     if (import.meta.client) {
         onMounted(startPolling);
-        onUnmounted(teardown);
+        onUnmounted(() => {
+            teardown();
+            pollStarted = false;
+        });
     }
 }
