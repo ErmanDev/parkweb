@@ -37,7 +37,7 @@ function startPolling() {
     slotsApiUrl = base ? `${base}/api/slots` : "/api/slots";
     teardown();
     pollOnce();
-    pollTimer = window.setInterval(pollOnce, 500);
+    pollTimer = window.setInterval(pollOnce, 1000);
 }
 
 function teardown() {
