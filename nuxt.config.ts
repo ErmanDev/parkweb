@@ -5,6 +5,13 @@ export default defineNuxtConfig({
   modules: ['@nuxtjs/tailwindcss'],
   css: ['~/assets/style.css'],
 
+  runtimeConfig: {
+    public: {
+      /** Set on Vercel to your Render URL, e.g. https://stunbning.onrender.com */
+      apiBase: process.env.NUXT_PUBLIC_API_BASE || "",
+    },
+  },
+
   vite: {
     optimizeDeps: {
       include: [

@@ -12,10 +12,11 @@ const slots = ref([...FALLBACK_SLOTS]);
 const connectionState = ref("connecting");
 let pollTimer = null;
 let pollStarted = false;
+let slotsApiUrl = "/api/slots";
 
 async function pollOnce() {
     try {
-        const data = await $fetch("/api/slots");
+        const data = await $fetch(slotsApiUrl);
         const mapped = mapSnapshotSlots(data);
         if (mapped) slots.value = mapped;
         connectionState.value = "live";
@@ -27,6 +28,8 @@ async function pollOnce() {
 function startPolling() {
     if (import.meta.server || pollStarted) return;
     pollStarted = true;
+    const { apiUrl } = useApiBase();
+    slotsApiUrl = apiUrl("/api/slots");
     teardown();
     pollOnce();
     pollTimer = window.setInterval(pollOnce, 1000);
