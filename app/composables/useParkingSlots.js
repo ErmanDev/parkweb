@@ -20,16 +20,21 @@ async function pollOnce() {
         const mapped = mapSnapshotSlots(data);
         if (mapped) slots.value = mapped;
         connectionState.value = "live";
-    } catch {
+    } catch (err) {
         connectionState.value = "offline";
+        if (import.meta.dev) {
+            console.warn("[parking] slots poll failed:", slotsApiUrl, err);
+        }
     }
 }
 
 function startPolling() {
     if (import.meta.server || pollStarted) return;
     pollStarted = true;
-    const { apiUrl } = useApiBase();
-    slotsApiUrl = apiUrl("/api/slots");
+    const config = useRuntimeConfig();
+    const base = (config.public.apiBase || "").replace(/\/$/, "");
+    // Default: same-origin /api/slots (Vercel rewrites this to Render).
+    slotsApiUrl = base ? `${base}/api/slots` : "/api/slots";
     teardown();
     pollOnce();
     pollTimer = window.setInterval(pollOnce, 1000);

@@ -1,6 +1,10 @@
+import { handleCorsPreflight } from "~~/server/utils/cors";
 import { ingestReading, type IngestPayload } from "~~/server/utils/parkingState";
 
 export default defineEventHandler(async (event) => {
+    const preflight = handleCorsPreflight(event);
+    if (preflight !== undefined) return preflight;
+
     const body = await readBody<Partial<IngestPayload> & {
         // Convenience aliases so the Arduino sketch stays simple.
         distance?: number | null;

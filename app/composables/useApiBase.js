@@ -1,6 +1,6 @@
 /**
  * Base URL for API requests. Empty in local dev (same origin as Nuxt).
- * On Vercel, set NUXT_PUBLIC_API_BASE=https://stunbning.onrender.com
+ * On Vercel, set NUXT_PUBLIC_API_BASE=https://parkweb.onrender.com
  */
 export function useApiBase() {
     const config = useRuntimeConfig();

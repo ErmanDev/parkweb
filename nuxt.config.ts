@@ -7,9 +7,16 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      /** Set on Vercel to your Render URL, e.g. https://stunbning.onrender.com */
+      /**
+       * Optional: direct cross-origin API URL (needs CORS on Render).
+       * Prefer leaving this empty on Vercel — vercel.json proxies /api/* to Render.
+       */
       apiBase: process.env.NUXT_PUBLIC_API_BASE || "",
     },
+  },
+
+  nitro: {
+    preset: process.env.VERCEL ? "vercel" : "node-server",
   },
 
   vite: {
