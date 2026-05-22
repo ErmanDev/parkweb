@@ -79,6 +79,18 @@
     box-shadow: inset 0 0 0 1px rgba(240, 226, 226, 0.3), 0 16px 34px rgba(100, 116, 139, 0.16);
 }
 
+.slot-unavailable {
+    background:
+        repeating-linear-gradient(
+            135deg,
+            rgba(148, 163, 184, 0.55) 0,
+            rgba(148, 163, 184, 0.55) 10px,
+            rgba(100, 116, 139, 0.45) 10px,
+            rgba(100, 116, 139, 0.45) 20px
+        );
+    box-shadow: inset 0 0 0 1px rgba(226, 232, 240, 0.45), 0 16px 34px rgba(100, 116, 139, 0.18);
+}
+
 .slot-frame span {
     position: absolute;
     width: 2rem;
