@@ -64,9 +64,9 @@ export const EVAL_WINDOW_MS = 4_000;
 /**
  * A live slot is reported as `unavailable` if no sensor reading has arrived
  * within this many milliseconds (e.g. the Arduino is offline, unplugged, or
- * lost Wi-Fi).
+ * lost Wi-Fi). ESP boards POST about every 1s — ~2.5s ≈ 2–3 missed reads.
  */
-export const STALE_TIMEOUT_MS = 30_000;
+export const STALE_TIMEOUT_MS = 2_500;
 
 // ---- Storage ---------------------------------------------------------------
 

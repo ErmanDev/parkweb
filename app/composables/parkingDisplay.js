@@ -5,23 +5,42 @@ export const FALLBACK_SLOTS = [
     { label: "SLOT 4", type: "motor", status: "unavailable", live: true, sensorId: "slot4" },
 ];
 
+/** Keep in sync with server STALE_TIMEOUT_MS (parkingState.ts). */
+export const SENSOR_STALE_MS = 2_500;
+
+export function isSensorStale(slot) {
+    if (!slot?.live) return false;
+    const ts = slot.lastReading?.receivedAt ?? slot.updatedAt;
+    if (!ts) return true;
+    return Date.now() - ts > SENSOR_STALE_MS;
+}
+
 export function mapSnapshotSlots(payload) {
     if (!payload || !Array.isArray(payload.slots)) return null;
-    return payload.slots.map((slot) => ({
-        label: slot.label,
-        type: slot.type,
-        status: slot.status,
-        live: !!slot.live,
-        sensorId: slot.sensorId,
-        lastReading: slot.lastReading || null,
-        evaluating: !!slot.evaluating,
-        evaluatingUntil: slot.evaluatingUntil || null,
-        updatedAt: slot.updatedAt || null,
-    }));
+    return payload.slots.map((slot) => {
+        const mapped = {
+            label: slot.label,
+            type: slot.type,
+            status: slot.status,
+            live: !!slot.live,
+            sensorId: slot.sensorId,
+            lastReading: slot.lastReading || null,
+            evaluating: !!slot.evaluating,
+            evaluatingUntil: slot.evaluatingUntil || null,
+            updatedAt: slot.updatedAt || null,
+        };
+        if (mapped.live && isSensorStale(mapped)) {
+            mapped.status = "unavailable";
+        }
+        return mapped;
+    });
 }
 
 export function formatDistance(slot) {
-    const reading = slot && slot.lastReading;
+    if (!slot || slot.status === "unavailable" || isSensorStale(slot)) {
+        return "sensor offline";
+    }
+    const reading = slot.lastReading;
     if (!reading || reading.distance_mm === null || reading.distance_mm === undefined) {
         return "out of range";
     }
@@ -54,5 +73,8 @@ export function statusBadgeClass(slot) {
 }
 
 export function motionLabel(slot) {
-    return slot?.lastReading?.motion ? "Detected" : "None";
+    if (!slot || slot.status === "unavailable" || isSensorStale(slot)) {
+        return "Offline";
+    }
+    return slot.lastReading?.motion ? "Detected" : "None";
 }
